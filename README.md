@@ -1,4 +1,4 @@
-# WildLens 🦌📷
+# WildLens
 
 **Real-time wildlife detection and species identification system**, built for CSE 546 (University at Buffalo). WildLens detects animals in video/livestream footage and classifies them across 500 vertebrate species.
 
@@ -12,10 +12,10 @@ WildLens combines a fine-tuned detector with a species classifier to identify wi
 
 ## Features
 
-- 🎯 **Detection + classification pipeline** fine-tuned from **MegaDetector v5a**, extended to identify **500 vertebrate species**
-- 📹 **Multiple input modes**: upload a video, point it at a livestream, or drop in a **YouTube URL** (via `yt-dlp`) for automatic download-and-detect
-- 🖥️ **Gradio-based UI** — runs locally or deployed on HuggingFace Spaces
-- ⚡ Trained and tuned for real-time-friendly inference
+-  **Detection + classification pipeline** fine-tuned from **MegaDetector v5a**, extended to identify **500 vertebrate species**
+-  **Multiple input modes**: upload a video, point it at a livestream, or drop in a **YouTube URL** (via `yt-dlp`) for automatic download-and-detect
+-  **Gradio-based UI** — runs locally or deployed on HuggingFace Spaces
+-  Trained and tuned for real-time-friendly inference
 
 ## Results
 
