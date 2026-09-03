@@ -1,77 +1,137 @@
-# WildLens
+# WildLens 🦁
+### Real-Time Wildlife Detection & Species Identification from Live Video
 
-**Real-time wildlife detection and species identification system**, built for CSE 546 (University at Buffalo). WildLens detects animals in video/livestream footage and classifies them across 500 vertebrate species.
+> Fine-tuning MegaDetector v5a from 3 generic classes to **500 vertebrate species** — 
+> with a domain-specific auto-labeling pipeline and live video inference enriched by 
+> GBIF taxonomy and IUCN conservation status.
 
-🔗 **Live demo**: [Prateek2106/Wildlife-Detector on HuggingFace Spaces](https://huggingface.co/spaces/Prateek2106/Wildlife-Detector)
+**CSE 546 · University at Buffalo · Spring 2026**  
+🔗 [Live Demo on HuggingFace Spaces](https://huggingface.co/spaces/Prateek2106/Wildlife-Detector) · 
+📄 [Poster](WildLifeWatch_Poster_v2.pptx)
 
 ---
 
-## Overview
+## Detections
 
-WildLens combines a fine-tuned detector with a species classifier to identify wildlife from video input — whether it's an uploaded clip, a livestream, or a YouTube video. The goal: give researchers, conservationists, or hobbyists a fast, low-friction way to identify what's on camera without manual review.
+<table>
+  <tr>
+    <td align="center">
+      <img src="assets/jaguar.jpg" width="340"/><br/>
+      <b>Panthera onca</b> · Jaguar
+    </td>
+    <td align="center">
+      <img src="assets/heron.jpg" width="340"/><br/>
+      <b>Ardea goliath</b> · Goliath Heron
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/frog.jpg" width="340"/><br/>
+      <b>Oophaga pumilio</b> · Strawberry Poison-dart Frog
+    </td>
+    <td align="center">
+      <img src="assets/kingfisher.jpg" width="340"/><br/>
+      <b>Corythornis cristatus</b> · Malachite Kingfisher
+    </td>
+  </tr>
+</table>
 
-## Features
+---
 
--  **Detection + classification pipeline** fine-tuned from **MegaDetector v5a**, extended to identify **500 vertebrate species**
--  **Multiple input modes**: upload a video, point it at a livestream, or drop in a **YouTube URL** (via `yt-dlp`) for automatic download-and-detect
--  **Gradio-based UI** — runs locally or deployed on HuggingFace Spaces
--  Trained and tuned for real-time-friendly inference
+## The Problem
 
-## Results
+MegaDetector finds animals — but not species. SpeciesNet classifies — but doesn't 
+localize or run in real time. No existing open system does both on live video streams 
+with conservation context.
+
+WildLens bridges that gap: real-time species-level detection on live wildlife footage, 
+enriched with GBIF taxonomy and IUCN conservation status per detection.
+
+---
+
+## Key Results
 
 | Metric | Value |
-|---|---|
-| Species covered | 500 |
-| Training set | ~92K images |
-| Validation set | ~8K images |
-| mAP50 | ~0.637 |
+|--------|-------|
+| Species covered | 500 vertebrates |
+| Training images | 91,993 |
+| Validation images | 8,007 |
+| **mAP50** | **0.637** |
+| mAP50-95 | 0.593 |
+| Precision | 0.610 |
+| Recall | 0.599 |
+| Training | 30 epochs · A100 40GB |
 
-The dataset was auto-labeled using MegaDetector v5a and augmented into a flat 500-class structure for training.
+Top performing species (mAP50 ≥ 0.94): Malachite Kingfisher, Goliath Heron, 
+Strawberry Poison Dart Frog, Jaguar, Razor-backed Musk Turtle.
 
-## Repo Structure
+---
 
-```
-├── Live_animal_detection.ipynb   # Training / experimentation notebook
-├── app.py                        # Gradio app entry point
-├── Sample Videos/                # Example input clips
-├── output.mp4                    # Sample detection output
-├── WildLifeWatch_Poster_v2.pptx  # Project poster (CSE Demo Day)
-└── requirements.txt
-```
+## Data Pipeline
 
-## Getting Started
+**1. Collection** — 54,866 research-grade images across 500 vertebrate species via iNaturalist API  
+**2. Auto-labeling** — MegaDetector v5a: 51,603 labels at 94.5% rate vs 65% with COCO-trained YOLOv8  
+**3. Augmentation** — Albumentations bbox-aware transforms: +48,242 images  
+**4. Training set** — 100,000 image-label pairs → fine-tune MegaDetector → `best.pt`
+
+**Domain-specific auto-labeling was the critical insight.**  
+Using MegaDetector — pretrained on 4.5M wildlife camera trap images — to label 
+our own training data gave a **94.5% label rate vs 65%** with COCO-trained YOLOv8 
+on the same images. That's 51,603 usable labels vs 36,544 — 15,059 more training 
+examples from the same raw images.
+
+---
+
+## Model
+
+Fine-tuned **MegaDetector v5a** (YOLOv5x6, 144M parameters):
+
+- Detection head replaced: 3 generic classes → 500 species
+- 955/963 pretrained weights transferred
+- Backbone layers 0–9 frozen
+- box_loss dropped **68% in epoch 1** — wildlife pretraining transferred immediately
+
+---
+
+## Ecologically Interesting Finding
+
+*Red-billed Oxpecker* (*Buphagus erythrorynchus*) was consistently misidentified — 
+not because the model failed, but because iNaturalist images of oxpeckers almost 
+always show them perched on host animals (giraffes, buffalo, rhino).
+
+The model learned **ecological co-occurrence** rather than isolated bird features. 
+This suggests citizen science training distributions reflect real ecological 
+relationships — which has implications for how we curate species-specific datasets 
+and interpret model errors in biodiversity informatics contexts.
+
+---
+
+## Architecture
+
+
+
+
+---
+
+## Quick Start
 
 ```bash
-git clone https://github.com/<your-username>/LiveStream_Animal_Detection.git
+git clone https://github.com/Prateek-2106/LiveStream_Animal_Detection.git
 cd LiveStream_Animal_Detection
 pip install -r requirements.txt
+
+# download model weights from HuggingFace
+python -c "
+from huggingface_hub import hf_hub_download
+hf_hub_download('Prateek2106/wildlife-detector', 'best.pt', local_dir='.')
+hf_hub_download('Prateek2106/wildlife-detector', 'class_map.json', local_dir='.')
+"
+
 python app.py
 ```
 
-This launches the Gradio app locally, where you can upload a video, paste a YouTube link, or point it at a livestream source.
-
-## Tech Stack
-
-- **Detection base**: MegaDetector v5a
-- **Classification**: Fine-tuned on a custom 500-species dataset
-- **UI**: Gradio
-- **Video ingestion**: yt-dlp
-- **Training hardware**: Windows / RTX 5070 (local), with cloud experimentation during development
-
-## Background
-
-Earlier iterations explored a YOLOv8m-based segmentation approach before pivoting to the MegaDetector-based detect-then-classify pipeline, which gave stronger species-level accuracy. Presented at **UB CSE Demo Day**.
-
-## Roadmap
-
-- [ ] Dockerize the app
-- [ ] CI/CD via GitHub Actions
-- [ ] Explore PySpark for the dataset augmentation/split pipeline
-
-## Acknowledgments
-
-Built on top of [MegaDetector](https://github.com/microsoft/CameraTraps) for the base detection model.
+Opens at `http://localhost:7860` — upload a video or paste a YouTube URL.
 
 ---
 
-*CSE 546 course project — University at Buffalo*
+## Repo Structure
