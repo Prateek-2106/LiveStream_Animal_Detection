@@ -135,3 +135,41 @@ Opens at `http://localhost:7860` — upload a video or paste a YouTube URL.
 ---
 
 ## Repo Structure
+
+
+
+---
+
+## Limitations & Open Questions
+
+- ~110 images/species average — data-limited for rare species
+- Visually similar species remain hard (leopard/jaguar, *Larus* gulls) — 
+  motivates taxonomic-aware loss functions
+- Context-dependent errors from citizen science distribution bias (oxpecker finding)
+- Currently processes video offline — live stream inference is CPU-bottlenecked 
+  without dedicated hardware
+
+**Open research directions:**
+- SAM-based region proposal replacing YOLO anchor boxes for camouflaged species
+- Temporal context across frames for live stream detection
+- Edge deployment (Jetson Orin Nano) for autonomous camera traps
+- Expanding to 2,000+ species using LILA BC + Wildlife Insights datasets
+
+---
+
+## Stack
+
+`PyTorch` · `YOLOv5` · `MegaDetector v5a` · `Gradio` · `Albumentations` · 
+`iNaturalist API` · `GBIF API` · `yt-dlp` · `HuggingFace Hub`
+
+---
+
+## Acknowledgments
+
+Built on [MegaDetector](https://github.com/microsoft/CameraTraps) (Microsoft AI for Earth).  
+Training data sourced from [iNaturalist](https://www.inaturalist.org/) research-grade observations.  
+Conservation status from [IUCN Red List](https://www.iucnredlist.org/).
+
+---
+
+*CSE 546 · Spring 2026 · University at Buffalo*
