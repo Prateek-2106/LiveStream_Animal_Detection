@@ -16,21 +16,21 @@
 <table>
   <tr>
     <td align="center">
-      <img src="assets/jaguar.jpg" width="340"/><br/>
+      <img src="assets/jaguar.jpeg" width="340"/><br/>
       <b>Panthera onca</b> · Jaguar
     </td>
     <td align="center">
-      <img src="assets/heron.jpg" width="340"/><br/>
+      <img src="assets/heron.jpeg" width="340"/><br/>
       <b>Ardea goliath</b> · Goliath Heron
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="assets/frog.jpg" width="340"/><br/>
+      <img src="assets/frog.jpeg" width="340"/><br/>
       <b>Oophaga pumilio</b> · Strawberry Poison-dart Frog
     </td>
     <td align="center">
-      <img src="assets/kingfisher.jpg" width="340"/><br/>
+      <img src="assets/kingfisher.jpeg" width="340"/><br/>
       <b>Corythornis cristatus</b> · Malachite Kingfisher
     </td>
   </tr>
